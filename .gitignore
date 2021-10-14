@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+.eslintrc.js
+.eslintignore
+esLintTest.js
+sample_test
+.env

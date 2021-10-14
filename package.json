@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "eslint-config-hackreactor": "github:hackreactor-labs/eslint-config-hackreactor",
+    "express": "^4.17.1",
+    "node": "^16.10.0"
+  },
+  "name": "reviews-service",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^8.0.1",
+    "jest": "^27.2.5",
+    "nodemon": "^2.0.13"
+  },
+  "scripts": {
+    "server": "node server/index.js",
+    "server-dev": "nodemon --watch server server/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sdc-by-sdc/reviews-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sdc-by-sdc/reviews-service/issues"
+  },
+  "homepage": "https://github.com/sdc-by-sdc/reviews-service#readme"
+}
