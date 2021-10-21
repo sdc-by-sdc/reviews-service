@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 // MongoDB Implementation
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/reviewdb');
+mongoose.connect(process.env.DB_CONNECTION_STRING);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Error: DB connection unsuccessful'));
