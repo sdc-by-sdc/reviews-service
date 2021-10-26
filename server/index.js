@@ -24,4 +24,10 @@ app.post('/characteristics', ((req, res) => {
     .catch((message) => { res.status(501).send(message); });
 }));
 
+app.post('/getcharacteristicname', ((req, res) => {
+  databaseHelpers.getCharacteristicName(req.body.characteristicId)
+    .then((name) => { res.status(200).send(name); })
+    .catch((message) => { res.status(501).send(message); });
+}));
+
 app.listen(port);
