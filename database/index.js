@@ -140,6 +140,8 @@ let saveCharacteristic = (characteristic) => {
             messages = messages.slice(0, messages.length - 1);
             reject('Characteristic did not match validated schema: \n' + messages);
           } else {
+            console.log('res._id from successful create: ');
+            console.dir(res._id.toString('hex'));
             resolve('Characteristic successfully created');
           }
         }));
@@ -156,8 +158,37 @@ let saveCharacteristic = (characteristic) => {
   });
 };
 
+let getCharacteristicName = (characteristicId) => {
+  return new Promise((resolve, reject) => {
+    Characteristic.find({ id: mongoose.Types.ObjectId(characteristicId) }, 'name', null, ((err, res) => {
+      if (!err) {
+        let charName = res[0]['_doc'].name;
+        resolve(charName);
+      } else {
+        reject(err);
+      }
+    }));
+  });
+};
+
+let postNewReview = (review) => {
+  let newCharacteristics = [];
+  for (var x in review.characteristics) {
+    newCharacteristics.push(new ReviewCharacteristic({[x]: [review.characteristics[x]]}));
+  }
+  let newPhotos = [];
+  for (i = 0; i < review.photos.length; i++) {
+    newPhotos.push(new ReviewPhoto({'url': review.photos[i]}));
+  }
+  return new Promise((resolve, reject) => {
+    Review.create({});
+  });
+
+};
+
 // module.exports = ReviewCharacteristic;
 // module.exports = Characteristic;
 // module.exports = ReviewPhoto;
 // module.exports = Review;
 module.exports.saveCharacteristic = saveCharacteristic;
+module.exports.getCharacteristicName = getCharacteristicName;
