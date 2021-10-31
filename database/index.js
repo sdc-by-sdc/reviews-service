@@ -1,9 +1,7 @@
-// require('dotenv').config();
 import dotenv from 'dotenv';
 dotenv.config();
 
 // MongoDB Implementation
-// const mongoose = require('mongoose');
 import mongoose from 'mongoose';
 mongoose.connect(process.env.DB_CONNECTION_STRING);
 
@@ -131,7 +129,7 @@ let ReviewPhoto = mongoose.model('ReviewPhoto', reviewPhotoSchema);
 let Review = mongoose.model('Review', reviewSchema);
 
 // FUNCTIONS
-let saveCharacteristic = (characteristic) => {
+export function saveCharacteristic(characteristic) {
   return new Promise((resolve, reject) => {
     Characteristic.exists(characteristic, null, ((err, res) => {
       if (!err && !res) {
@@ -162,7 +160,7 @@ let saveCharacteristic = (characteristic) => {
   });
 };
 
-let getCharacteristicName = (characteristicId) => {
+export function getCharacteristicName(characteristicId) {
   return new Promise((resolve, reject) => {
     Characteristic.find({ id: mongoose.Types.ObjectId(characteristicId) }, 'name', null, ((err, res) => {
       if (!err) {
@@ -175,7 +173,7 @@ let getCharacteristicName = (characteristicId) => {
   });
 };
 
-let postNewReview = (review) => {
+export function postNewReview(review) {
   let newCharacteristics = [];
   for (var x in review.characteristics) {
     newCharacteristics.push(new ReviewCharacteristic({[x]: [review.characteristics[x]]}));
@@ -190,10 +188,4 @@ let postNewReview = (review) => {
 
 };
 
-// module.exports = ReviewCharacteristic;
-// module.exports = Characteristic;
-// module.exports = ReviewPhoto;
-// module.exports = Review;
-// module.exports.saveCharacteristic = saveCharacteristic;
-// module.exports.getCharacteristicName = getCharacteristicName;
-export { saveCharacteristic, getCharacteristicName };
+export default { saveCharacteristic, getCharacteristicName };
