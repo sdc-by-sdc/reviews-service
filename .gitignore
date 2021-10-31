@@ -109,3 +109,6 @@ esLintTest.js
 sample_test
 .env
 server/returned_json_examples/
+.babelrc
+jest.config.json
+server/app.test.js

@@ -1,5 +1,6 @@
 import app from './app.js';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 let port = process.env.PORT;
 let host = process.env.HOST;

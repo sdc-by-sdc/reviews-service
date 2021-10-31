@@ -1,6 +1,9 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const databaseHelpers = require('../database/index');
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const databaseHelpers = require('../database/index');
+import express from 'express';
+import bodyParser from 'body-parser';
+import { saveCharacteristic, getCharacteristicName } from '../database/index.js';
 // import { ReviewCharacteristic, Characteristic, ReviewPhoto, Review } from '../database/index.js';
 
 const app = express();

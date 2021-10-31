@@ -1,7 +1,10 @@
-require('dotenv').config();
+// require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 // MongoDB Implementation
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 mongoose.connect(process.env.DB_CONNECTION_STRING);
 
 const db = mongoose.connection;
@@ -82,7 +85,8 @@ let reviewSchema = mongoose.Schema({
   body: {
     type: String,
     minLength: [50, 'The review body must be at least 50 characters long'],
-    maxLength: [1000, 'The review body must not exceed 1000 characters']
+    maxLength: [1000, 'The review body must not exceed 1000 characters'],
+    required: [true, 'A \'body\' property with a string value must be included in the review']
   },
   characteristics: {
     type: [reviewCharacteristicSchema],
@@ -190,5 +194,6 @@ let postNewReview = (review) => {
 // module.exports = Characteristic;
 // module.exports = ReviewPhoto;
 // module.exports = Review;
-module.exports.saveCharacteristic = saveCharacteristic;
-module.exports.getCharacteristicName = getCharacteristicName;
+// module.exports.saveCharacteristic = saveCharacteristic;
+// module.exports.getCharacteristicName = getCharacteristicName;
+export { saveCharacteristic, getCharacteristicName };
