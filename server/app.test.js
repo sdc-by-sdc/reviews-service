@@ -1,8 +1,16 @@
+import { jest } from '@jest/globals';
 import supertest from 'supertest';
-import app from './app.js';
+import makeApp from './app.js';
 import 'regenerator-runtime/runtime';
 // const supertest = require('supertest');
-// const app = require('./app.js');
+
+const saveCharacteristic = jest.fn();
+const getCharacteristicName = jest.fn();
+
+const app = makeApp({
+  saveCharacteristic,
+  getCharacteristicName
+})
 
 // TODO: CHECK TO SEE HOW STRING INPUTS HANDLE SPECIAL CHARACTERS (' " ? / \ etc)
 
