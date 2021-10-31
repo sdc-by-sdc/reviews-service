@@ -20,7 +20,25 @@ describe('GET /reviews', () => {
       });
       expect(response.statusCode).toBe(200);
     });
-    // should specify JSON in the content type header
+
+    test('should specify JSON in the content type header', async () => {
+      const response = await supertest(app).get('/reviews').query({
+        page: 1,
+        count: 5,
+        sort: 'relevant',
+        product_id: 2
+      });
+      expect(response.headers['content-type']).toEqual(expect.stringContaining("json"));
+    });
+
+    /* This can be deleted in the future */
+    test('should contain \'review_id\' in first result', async () => {
+      const response = await supertest(app).get('/reviews').query({
+        product_id: 59556,
+        sort: 'relevant'
+      });
+      expect(response.body.results[0].review_id).toBeDefined();
+    })
   });
 
   describe('when "page" param is valid and different from default', () => {
@@ -71,7 +89,13 @@ describe('GET /reviews', () => {
 
   // Un-successful Calls
   describe('when invalid "page" param format is requested', () => {
-
+    test('should respond with a 400 status code', async () => {
+      const response = await supertest(app).get('/reviews').query({
+        product_id: 59556,
+        page: 'relevant'
+      });
+      expect(response.statusCode).toBe(400);
+    });
   });
 
   describe('when invalid "count" param format is requested', () => {
