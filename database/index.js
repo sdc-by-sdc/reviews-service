@@ -247,6 +247,9 @@ export function getReviews(productId, page=1, count=5, sort="relevant") {
     var query = Review.find({product_id: productId, reported: false}).sort(sortOrders[sort]).skip(count * (page - 1)).limit(count);
     query.exec((err, reviews) => {
       if (!err) {
+
+
+
         resolve(reviews);
       } else {
         reject(err);
@@ -254,6 +257,36 @@ export function getReviews(productId, page=1, count=5, sort="relevant") {
     })
   })
 
+};
+
+export function getReviewsMeta(productId) {
+  return new Promise((resolve, reject) => {
+    var query = Review.find({product_id: productId, reported: false});
+    query.exec((err, reviews) => {
+      if (!err) {
+        let overallRatings = {'1': 0, '1': 0, '2':0, '3':0, '4':0, '5':0};
+        let recommendedCounts = {'0': 0, '1': 0};
+        let characteristics = {};
+
+        for (var i = 0; i < reviews.length; i++) {
+          overallRatings[(reviews[i].rating).toString()]++;
+          if (reviews[i].recommend) {
+            recommendedCounts['1']++;
+          } else {
+            recommendedCounts['0']++;
+          }
+        }
+
+        resolve({
+          "product_id": productId.toString(),
+          "ratings": overallRatings,
+          "recommended": recommendedCounts
+        })
+      } else {
+        reject(err)
+      }
+    })
+  })
 }
 
-export default { saveCharacteristic, getCharacteristicName, getReviews };
+export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta };

@@ -92,6 +92,9 @@ export default function(database) {
     //  params:
     //    product_id: integer - Required ID of the product for which data should be returned
     //  res: 200 OK
+    database.getReviewsMeta(parseInt(req.query.product_id))
+      .then((result) => {res.status(200).send(result)})
+      .catch((message) => {res.status(400).send(message)})
   }));
 
   app.post('/reviews', ((req, res) => {
