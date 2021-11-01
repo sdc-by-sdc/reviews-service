@@ -236,12 +236,15 @@ export function postNewReview(review) {
 
 };
 
-export function getReviews(productId, page=1, count=5) {
-  return new Promise((resolve, reject) => {
-    // Review.find({ product_id: productId }, null, { skip: (count * (page - 1)), limit: count }).exec()
+export function getReviews(productId, page=1, count=5, sort="relevant") {
+  let sortOrders = {
+    "relevant": {helpfulness: -1, date: -1},
+    "helpful": {helpfulness: -1},
+    "newest": {date: -1}
+  }
 
-    // var query = Review.find({product_id: productId}).sort('mykey', 1).skip(2).limit(5);
-    var query = Review.find({product_id: productId}).skip(count * (page - 1)).limit(count);
+  return new Promise((resolve, reject) => {
+    var query = Review.find({product_id: productId}).sort(sortOrders[sort]).skip(count * (page - 1)).limit(count);
     query.exec((err, reviews) => {
       if (!err) {
         resolve(reviews);
@@ -249,14 +252,6 @@ export function getReviews(productId, page=1, count=5) {
         reject(err);
       }
     })
-
-    // Review.find({product_id: productId}, (err, reviews) => {
-    //   if (!err) {
-    //     resolve(reviews);
-    //   } else {
-    //     reject(err);
-    //   }
-    // })
   })
 
 }
