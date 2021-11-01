@@ -52,36 +52,39 @@ export default function(database) {
     //  res: 200 OK
 
     let intId = parseInt(req.query.product_id);
-      database.getReviews(intId)
-        .then((results) => {
-          let returnObj = {
-            product: req.query.product_id.toString(),
-            page: req.query.page || 1,
-            count: req.query.count || 5,
-          };
-          let rawResults = results.map((result) => {
-            return {
-              "review_id": result._id,
-              "rating": result.rating,
-              "summary": result.summary,
-              "recommend": result.recommend,
-              "response": result.response || null,
-              "body": result.body,
-              "date": new Date(result.date),
-              "reviewer_name": result.reviewer_name,
-              "helpfulness": result.helpfulness,
-              "photos": result.photos.map((photo) => {
-                return {
-                  "id": photo._id,
-                  "url": photo.url
-                }
-              })
-            }
-          });
-          returnObj.results = rawResults;
-          res.status(200).send(returnObj)
-        })
-        .catch((message) => {res.status(400).send(message)})
+    let page = parseInt(req.query.page || 1);
+    let count = parseInt(req.query.count || 5);
+
+    database.getReviews(intId, page, count)
+      .then((results) => {
+        let returnObj = {
+          "product": req.query.product_id.toString(),
+          "page": page,
+          "count": count,
+        };
+        let rawResults = results.map((result) => {
+          return {
+            "review_id": result._id,
+            "rating": result.rating,
+            "summary": result.summary,
+            "recommend": result.recommend,
+            "response": result.response || null,
+            "body": result.body,
+            "date": new Date(result.date),
+            "reviewer_name": result.reviewer_name,
+            "helpfulness": result.helpfulness,
+            "photos": result.photos.map((photo) => {
+              return {
+                "id": photo._id,
+                "url": photo.url
+              }
+            })
+          }
+        });
+        returnObj.results = rawResults;
+        res.status(200).send(returnObj)
+      })
+      .catch((message) => {res.status(400).send(message)})
   }));
 
   app.get('/reviews/meta', ((req, res) => {
