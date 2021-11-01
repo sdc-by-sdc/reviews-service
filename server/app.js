@@ -92,9 +92,30 @@ export default function(database) {
     //  params:
     //    product_id: integer - Required ID of the product for which data should be returned
     //  res: 200 OK
-    database.getReviewsMeta(parseInt(req.query.product_id))
-      .then((result) => {res.status(200).send(result)})
-      .catch((message) => {res.status(400).send(message)})
+    let productIdInt = parseInt(req.query.product_id);
+
+    Promise.all([database.getReviewsMeta(productIdInt), database.getCharacteristicsMeta(productIdInt)])
+      .then(([temp_result, charNames]) => {
+        console.dir(temp_result);
+        console.dir(charNames);
+
+        for (var x in charNames) {
+          let ratings = temp_result.characteristics_temp[charNames[x].id.toString()];
+          let sum = 0;
+          for (var i = 0; i < ratings.length; i++) {
+            sum += ratings[i]
+          }
+          let average = (sum / (ratings.length)).toFixed(4);
+          charNames[x].value = average
+        }
+
+        console.dir(charNames);
+        temp_result.characteristics = charNames;
+        delete temp_result.characteristics_temp;
+        res.status(200).send(temp_result);
+
+      })
+      .catch((err) => {res.status(400).send(err)})
   }));
 
   app.post('/reviews', ((req, res) => {

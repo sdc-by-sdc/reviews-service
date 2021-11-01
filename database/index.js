@@ -275,12 +275,20 @@ export function getReviewsMeta(productId) {
           } else {
             recommendedCounts['0']++;
           }
+          for (var j = 0; j < reviews[i].characteristic_ratings.length; j++) {
+            if (!characteristics[reviews[i].characteristic_ratings[j].characteristic_id]) {
+              characteristics[reviews[i].characteristic_ratings[j].characteristic_id] = [reviews[i].characteristic_ratings[j].value]
+            } else {
+              characteristics[reviews[i].characteristic_ratings[j].characteristic_id].push(reviews[i].characteristic_ratings[j].value)
+            }
+          }
         }
 
         resolve({
           "product_id": productId.toString(),
           "ratings": overallRatings,
-          "recommended": recommendedCounts
+          "recommended": recommendedCounts,
+          "characteristics_temp": characteristics
         })
       } else {
         reject(err)
@@ -289,4 +297,28 @@ export function getReviewsMeta(productId) {
   })
 }
 
-export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta };
+export function getCharacteristicsMeta(productId) {
+  return new Promise((resolve, reject) => {
+    var query = Characteristic.find({product_id: productId});
+    let characteristics = {};
+
+    query.exec((err, chars) => {
+      if (!err) {
+        for (var i = 0; i < chars.length; i++) {
+          characteristics[chars[i].name] = {
+            id: chars[i]._id
+          }
+        }
+
+        resolve(characteristics);
+
+      } else {
+        reject(err)
+      }
+    })
+  })
+}
+
+
+
+export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta, getCharacteristicsMeta };
