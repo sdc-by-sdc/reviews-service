@@ -244,7 +244,7 @@ export function getReviews(productId, page=1, count=5, sort="relevant") {
   }
 
   return new Promise((resolve, reject) => {
-    var query = Review.find({product_id: productId}).sort(sortOrders[sort]).skip(count * (page - 1)).limit(count);
+    var query = Review.find({product_id: productId, reported: false}).sort(sortOrders[sort]).skip(count * (page - 1)).limit(count);
     query.exec((err, reviews) => {
       if (!err) {
         resolve(reviews);
