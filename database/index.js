@@ -11,6 +11,20 @@ db.once('open', () => { console.log('Connected to database'); });
 
 // SCHEMA FOR REVIEW PHOTO DOCUMENTS
 let reviewPhotoSchema = mongoose.Schema({
+  id: {
+    type: Number,
+    validate: {
+      validator: function(id) { id.isInteger; },
+      message: 'The productId value must be an integer'
+    }
+  },
+  review_id: {
+    type: Number,
+    validate: {
+      validator: function(id) { id.isInteger; },
+      message: 'The productId value must be an integer'
+    }
+  },
   url: {
     type: String,
     required: true
@@ -19,7 +33,14 @@ let reviewPhotoSchema = mongoose.Schema({
 
 // SCHEMA FOR CHARACTERISTIC DOCUMENTS
 let characteristicSchema = mongoose.Schema({
-  productId: {
+  id: {
+    type: Number,
+    validate: {
+      validator: function(id) { id.isInteger; },
+      message: 'The productId value must be an integer'
+    }
+  },
+  product_id: {
     type: Number,
     required: [true, 'A \'productId\' property must be included in the characteristic'],
     validate: {
@@ -35,9 +56,23 @@ let characteristicSchema = mongoose.Schema({
 
 // SCHEMA FOR REVIEW CHARACTERISTIC DOCUMENTS
 let reviewCharacteristicSchema = mongoose.Schema({
-  characteristicId: {
+  id: {
+    type: Number,
+    validate: {
+      validator: function(id) { id.isInteger; },
+      message: 'The productId value must be an integer'
+    }
+  },
+  characteristic_id: {
     type: String,
     required: [true, 'A \'characteristicId\' property must be included in the review characteristic']
+  },
+  review_id: {
+    type: Number,
+    validate: {
+      validator: function(id) { id.isInteger; },
+      message: 'The productId value must be an integer'
+    }
   },
   value: {
     type: Number,
@@ -53,7 +88,14 @@ let reviewCharacteristicSchema = mongoose.Schema({
 
 // SCHEMA FOR REVIEW DOCUMENTS
 let reviewSchema = mongoose.Schema({
-  productId: {
+  id: {
+    type: Number,
+    validate: {
+      validator: function(id) { id.isInteger; },
+      message: 'The productId value must be an integer'
+    }
+  },
+  product_id: {
     type: Number,
     required: [true, 'A \'productId\' property must be included in the review'],
     validate: {
@@ -71,36 +113,37 @@ let reviewSchema = mongoose.Schema({
       message: 'The overall rating submitted must be an integer value'
     }
   },
+  date: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
   summary: {
     type: String,
     maxLength: [60, 'The review summary must not exceed 60 characters']
   },
-  recommended: {
-    type: Boolean,
-    required: [true, 'A \'recommended\' property with a boolean value must be included in the review']
-  },
-  response: String,
   body: {
     type: String,
     minLength: [50, 'The review body must be at least 50 characters long'],
     maxLength: [1000, 'The review body must not exceed 1000 characters'],
     required: [true, 'A \'body\' property with a string value must be included in the review']
   },
-  characteristics: {
-    type: [reviewCharacteristicSchema],
-    required: [true, 'Review must include characteristic ratings']
+  recommend: {
+    type: String,
+    required: [true, 'A \'recommended\' property with a string value of \'true\' or \'false\' must be included in the review'],
+    enum: ['true', 'false']
   },
-  date: {
-    type: Date,
-    default: Date.now,
-    required: true
+  reported: {
+    type: String,
+    required: [true, 'A \'reported\' property with a string value of \'true\' or \'false\' must be included in the review'],
+    enum: ['true', 'false']
   },
-  reviewerName: {
+  reviewer_name: {
     type: String,
     required: [true, 'A \'reviewerName\' property must be included in the review'],
     maxLength: [60, 'The \'reviewerName\' field must not exceed 60 characters']
   },
-  reviewerEmail: {
+  reviewer_email: {
     type: String,
     required: [true, 'A \'reviewerEmail\' property must be included in the review'],
     maxLength: [60, 'The \'reviewerEmail\' field must not exceed 60 characters'],
@@ -112,15 +155,15 @@ let reviewSchema = mongoose.Schema({
       message: 'The \'reviewerEmail\' value was not valid email address syntax'
     }
   },
+  response: String,
   helpfulness: Number,
   photos: {
     type: [reviewPhotoSchema]
   },
-  reported: {
-    type: Boolean,
-    default: false
+  characteristic_ratings: {
+    type: [reviewCharacteristicSchema],
+    required: [true, 'Review must include characteristic ratings']
   }
-
 });
 
 let ReviewCharacteristic = mongoose.model('ReviewCharacteristic', reviewCharacteristicSchema);
@@ -188,4 +231,19 @@ export function postNewReview(review) {
 
 };
 
-export default { saveCharacteristic, getCharacteristicName };
+export function getReviews(productId) {
+
+  return new Promise((resolve, reject) => {
+    Review.find({product_id: productId}, (err, reviews) => {
+      if (!err) {
+        console.dir(reviews);
+        resolve(reviews);
+      } else {
+        reject(err);
+      }
+    })
+  })
+
+}
+
+export default { saveCharacteristic, getCharacteristicName, getReviews };

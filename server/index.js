@@ -4,10 +4,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = makeApp(database);
-// const app = makeApp({
-//   saveCharacteristic: () => {},
-//   getCharacteristicName: () => {}
-// })
 
 let port = process.env.PORT;
 let host = process.env.HOST;

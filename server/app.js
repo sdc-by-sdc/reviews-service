@@ -50,11 +50,11 @@ export default function(database) {
     //    sort: text - Changes the sort order of reviews to be based on "newest", "helpful", or "relevant"
     //    product_id: integer - Specifies the product for which to retrieve reviews.
     //  res: 200 OK
-      if (req.query.page && !parseInt(req.query.page)) {
-        res.status(400).send('Invalid format in \'page\' parameter.  Must be an integer');
-      } else {
-        res.status(200).send({results: [{review_id: 1}]})
-      }
+
+    let intId = parseInt(req.query.product_id);
+      database.getReviews(intId)
+        .then((results) => res.status(200).send(results))
+        .catch((message) => {res.status(400).send(message)})
   }));
 
   app.get('/reviews/meta', ((req, res) => {
