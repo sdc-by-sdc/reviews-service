@@ -63,10 +63,6 @@ let reviewCharacteristicSchema = mongoose.Schema({
       message: 'The productId value must be an integer'
     }
   },
-  characteristic_id: {
-    type: String,
-    required: [true, 'A \'characteristicId\' property must be included in the review characteristic']
-  },
   review_id: {
     type: Number,
     validate: {
@@ -83,6 +79,10 @@ let reviewCharacteristicSchema = mongoose.Schema({
       validator: Number.isInteger,
       message: 'The review characteristic value submitted must be an integer value'
     }
+  },
+  characteristic_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, 'A \'characteristicId\' property must be included in the review characteristic']
   }
 });
 
@@ -114,8 +114,8 @@ let reviewSchema = mongoose.Schema({
     }
   },
   date: {
-    type: Date,
-    default: Date.now,
+    type: Number,
+    default: Date.now(),
     required: true
   },
   summary: {
@@ -129,14 +129,12 @@ let reviewSchema = mongoose.Schema({
     required: [true, 'A \'body\' property with a string value must be included in the review']
   },
   recommend: {
-    type: String,
-    required: [true, 'A \'recommended\' property with a string value of \'true\' or \'false\' must be included in the review'],
-    enum: ['true', 'false']
+    type: Boolean,
+    required: [true, 'A \'recommended\' property with a boolean value of \'true\' or \'false\' must be included in the review']
   },
   reported: {
-    type: String,
-    required: [true, 'A \'reported\' property with a string value of \'true\' or \'false\' must be included in the review'],
-    enum: ['true', 'false']
+    type: Boolean,
+    required: [true, 'A \'reported\' property with a boolean value of \'true\' or \'false\' must be included in the review']
   },
   reviewer_name: {
     type: String,
@@ -156,7 +154,14 @@ let reviewSchema = mongoose.Schema({
     }
   },
   response: String,
-  helpfulness: Number,
+  helpfulness: {
+    type: Number,
+    required: [true, 'A \'helpfulness\' property must be included in the review.  If creating a new review, set \'helpfulness\' property to 0'],
+    validate: {
+      validator: Number.isInteger,
+      message: 'The helpfulness value submitted must be an integer value'
+    }
+  },
   photos: {
     type: [reviewPhotoSchema]
   },
@@ -236,7 +241,6 @@ export function getReviews(productId) {
   return new Promise((resolve, reject) => {
     Review.find({product_id: productId}, (err, reviews) => {
       if (!err) {
-        console.dir(reviews);
         resolve(reviews);
       } else {
         reject(err);
