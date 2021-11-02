@@ -138,13 +138,13 @@ let reviewSchema = mongoose.Schema({
   },
   reviewer_name: {
     type: String,
-    required: [true, 'A \'reviewerName\' property must be included in the review'],
-    maxLength: [60, 'The \'reviewerName\' field must not exceed 60 characters']
+    required: [true, 'A \'reviewer_name\' property must be included in the review'],
+    maxLength: [60, 'The \'reviewer_name\' field must not exceed 60 characters']
   },
   reviewer_email: {
     type: String,
-    required: [true, 'A \'reviewerEmail\' property must be included in the review'],
-    maxLength: [60, 'The \'reviewerEmail\' field must not exceed 60 characters'],
+    required: [true, 'A \'reviewer_email\' property must be included in the review'],
+    maxLength: [60, 'The \'reviewer_email\' field must not exceed 60 characters'],
     validate: {
       validator: function(email) {
         const acceptablePattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -219,21 +219,6 @@ export function getCharacteristicName(characteristicId) {
       }
     }));
   });
-};
-
-export function postNewReview(review) {
-  let newCharacteristics = [];
-  for (var x in review.characteristics) {
-    newCharacteristics.push(new ReviewCharacteristic({[x]: [review.characteristics[x]]}));
-  }
-  let newPhotos = [];
-  for (i = 0; i < review.photos.length; i++) {
-    newPhotos.push(new ReviewPhoto({'url': review.photos[i]}));
-  }
-  return new Promise((resolve, reject) => {
-    Review.create({});
-  });
-
 };
 
 export function getReviews(productId, page=1, count=5, sort="relevant") {
@@ -319,6 +304,51 @@ export function getCharacteristicsMeta(productId) {
   })
 }
 
+export function postNewReview(reviewObj) {
+  return new Promise((resolve, reject) => {
+    let boolConverter = (original) => {
+      if (original === 'true' || original === '1' || original === 1) {
+        return true;
+      } else if (original === 'false' || original === '0' || original === 1) {
+        return false;
+      }
+    }
+
+    let newReqObj = {
+      product_id: parseInt(reviewObj.product_id),
+      rating: parseInt(reviewObj.rating),
+      summary: reviewObj.summary,
+      body: reviewObj.body,
+      recommend: boolConverter(reviewObj.recommend),
+      reported: false,
+      reviewer_name: reviewObj.name,
+      reviewer_email: reviewObj.email,
+      helpfulness: 0,
+      characteristics: [],
+      photos: []
+    }
+
+    if (reviewObj.photos) {
+      let newPhotosString = reviewObj.photos.replace(/'/g, "\"");
+      for (var i = 0; i < JSON.parse(newPhotosString).length; i++) {
+        newReqObj.photos.push({url: JSON.parse(newPhotosString)[i]})
+      }
+    }
+
+    for (var x in JSON.parse(reviewObj.characteristics)) {
+      newReqObj.characteristics.push({characteristic_id: x, value: reviewObj.characteristics[x]})
+    }
+
+    Review.create(newReqObj, (err, res) => {
+      if (!err) {
+        resolve('Successfully posted review')
+      } else {
+        reject(err)
+      }
+    })
+  })
+}
 
 
-export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta, getCharacteristicsMeta };
+
+export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta, getCharacteristicsMeta, postNewReview };

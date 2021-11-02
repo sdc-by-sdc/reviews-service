@@ -133,6 +133,9 @@ export default function(database) {
     //                              the review value for that characteristic. {"14": 5, "15": 5//...}
     //  res: 201 CREATED
 
+    database.postNewReview(req.query)
+      .then((result) => res.status(201).send(result))
+      .catch((message) => res.status(400).send(message))
   }));
 
   app.put('/reviews/:review_id/helpful', ((req, res) => {
