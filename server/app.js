@@ -143,6 +143,9 @@ export default function(database) {
     //  params:
     //    review_id: integer - Required ID of the review to update
     //  res: 204 NO CONTENT
+    database.markReviewHelpful(req.params.review_id)
+      .then((result) => res.status(204).send())
+      .catch((message) => {res.status(400).send(message)})
   }));
 
   app.put('/reviews/:review_id/report', ((req, res) => {
@@ -150,6 +153,9 @@ export default function(database) {
     //  params:
     //    review_id: integer - Required ID of the review to update
     //  res: 204 NO CONTENT
+    database.reportReview(req.params.review_id)
+      .then((result) => res.status(204).send())
+      .catch((message) => {res.status(400).send(message)})
   }));
 
   return app;

@@ -280,7 +280,7 @@ export function getReviewsMeta(productId) {
       }
     })
   })
-}
+};
 
 export function getCharacteristicsMeta(productId) {
   return new Promise((resolve, reject) => {
@@ -302,7 +302,7 @@ export function getCharacteristicsMeta(productId) {
       }
     })
   })
-}
+};
 
 export function postNewReview(reviewObj) {
   return new Promise((resolve, reject) => {
@@ -347,8 +347,32 @@ export function postNewReview(reviewObj) {
       }
     })
   })
-}
+};
+
+export function markReviewHelpful(reviewId) {
+  return new Promise((resolve, reject) => {
+    Review.findByIdAndUpdate(reviewId, { $inc: { helpfulness: 1 } }, (err, res) => {
+      if (!err) {
+        resolve(res);
+      } else {
+        reject(err)
+      }
+    })
+  })
+};
+
+export function reportReview(reviewId) {
+  return new Promise((resolve, reject) => {
+    Review.findByIdAndUpdate(reviewId, { reported: true }, (err, res) => {
+      if (!err) {
+        resolve(res);
+      } else {
+        reject(err)
+      }
+    })
+  })
+};
 
 
 
-export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta, getCharacteristicsMeta, postNewReview };
+export default { saveCharacteristic, getCharacteristicName, getReviews, getReviewsMeta, getCharacteristicsMeta, postNewReview, markReviewHelpful, reportReview };
