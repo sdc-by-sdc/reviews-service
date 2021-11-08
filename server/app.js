@@ -97,22 +97,32 @@ export default function(database) {
 
     Promise.all([database.getReviewsMeta(productIdInt), database.getCharacteristicsMeta(productIdInt)])
       .then(([temp_result, charNames]) => {
-        console.log('temp_result:');
-        console.dir(temp_result);
-        console.log('charNames');
-        console.dir(charNames);
-        for (var x in charNames) {
-          let ratings = temp_result.characteristics_temp[charNames[x].id.toString()];
-          let sum = 0;
-          for (var i = 0; i < ratings.length; i++) {
-            sum += ratings[i]
+        console.log(temp_result);
+        if (Object.keys(temp_result.ratings).length === 0) {
+          res.status(200).send({
+            product_id: temp_result.product_id,
+            ratings: {},
+            recommended: {},
+            characteristics: {}
+          })
+        } else {
+          for (var x in charNames) {
+            if (temp_result.characteristics_temp[charNames[x].id] === null) {
+              charNames[x].value = null;
+            } else {
+              let ratings = temp_result.characteristics_temp[charNames[x].id.toString()];
+              let sum = 0;
+              for (var i = 0; i < ratings.length; i++) {
+                sum += ratings[i]
+              }
+              let average = (sum / (ratings.length)).toFixed(4);
+              charNames[x].value = average
+            }
           }
-          let average = (sum / (ratings.length)).toFixed(4);
-          charNames[x].value = average
+          temp_result.characteristics = charNames;
+          delete temp_result.characteristics_temp;
+          res.status(200).send(temp_result);
         }
-        temp_result.characteristics = charNames;
-        delete temp_result.characteristics_temp;
-        res.status(200).send(temp_result);
       })
       .catch((err) => {console.dir(err); res.status(400).send(err)})
   }));

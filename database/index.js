@@ -254,22 +254,16 @@ export function getReviewsMeta(productId) {
   return new Promise((resolve, reject) => {
     var query = Review.find({product_id: productId});
     query.exec((err, reviews) => {
-      if (!err) {
-        console.log(reviews);
-
+      if (!err && reviews.length > 0) {
         let validReviewCount = 0;
         for (var i = 0; i < reviews.length; i++) {
           if (reviews[i].reported === false) {
             validReviewCount++;
           }
         }
-
-        console.log('valid review count: ' + validReviewCount);
         let overallRatings = {'1': 0, '2':0, '3':0, '4':0, '5':0};
         let recommendedCounts = {'false': 0, 'true': 0};
         let characteristics = {};
-
-        console.dir(reviews);
 
         if (validReviewCount) {
           for (var i = 0; i < reviews.length; i++) {
@@ -305,6 +299,13 @@ export function getReviewsMeta(productId) {
           "ratings": overallRatings,
           "recommended": recommendedCounts,
           "characteristics_temp": characteristics
+        })
+      } else if (!err) {
+        resolve({
+          "product_id": productId.toString(),
+          "ratings": {},
+          "recommended": {},
+          "characteristics_temp": {}
         })
       } else {
         reject(err)
