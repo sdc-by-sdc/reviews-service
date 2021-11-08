@@ -93,11 +93,9 @@ export default function(database) {
     //    product_id: integer - Required ID of the product for which data should be returned
     //  res: 200 OK
     let productIdInt = parseInt(req.query.product_id);
-    console.log(productIdInt);
 
     Promise.all([database.getReviewsMeta(productIdInt), database.getCharacteristicsMeta(productIdInt)])
       .then(([temp_result, charNames]) => {
-        console.log(temp_result);
         if (Object.keys(temp_result.ratings).length === 0) {
           res.status(200).send({
             product_id: temp_result.product_id,
