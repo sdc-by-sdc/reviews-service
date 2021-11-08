@@ -269,13 +269,11 @@ export function getReviewsMeta(productId) {
         let recommendedCounts = {'false': 0, 'true': 0};
         let characteristics = {};
 
-        if (validReviewCount) {
-          // let overallRatings = {'1': 0, '2':0, '3':0, '4':0, '5':0};
-          // let recommendedCounts = {'false': 0, 'true': 0};
-          // let characteristics = {};
+        console.dir(reviews);
 
+        if (validReviewCount) {
           for (var i = 0; i < reviews.length; i++) {
-            if (reviews.reported === false) {
+            if (reviews[i].reported === false) {
               overallRatings[(reviews[i].rating).toString()]++;
               if (reviews[i].recommend) {
                 recommendedCounts['true']++;
@@ -295,15 +293,12 @@ export function getReviewsMeta(productId) {
         } else {
           overallRatings = {};
           recommendedCounts = {};
-          // let characteristics = {};
 
           for (var i = 0; i < reviews[0].characteristic_ratings.length; i++) {
             characteristics[reviews[0].characteristic_ratings[i].characteristic_id] = null;
           }
 
         }
-
-        console.log(overallRatings);
 
         resolve({
           "product_id": productId.toString(),

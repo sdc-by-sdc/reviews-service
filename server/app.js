@@ -98,7 +98,9 @@ export default function(database) {
     Promise.all([database.getReviewsMeta(productIdInt), database.getCharacteristicsMeta(productIdInt)])
       .then(([temp_result, charNames]) => {
         console.log('temp_result:');
-        console.dir(temp_result)
+        console.dir(temp_result);
+        console.log('charNames');
+        console.dir(charNames);
         for (var x in charNames) {
           let ratings = temp_result.characteristics_temp[charNames[x].id.toString()];
           let sum = 0;
