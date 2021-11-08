@@ -15,7 +15,7 @@ export default function(database) {
   app.use(bodyParser.json());
 
   app.get('/', (req, res) => {
-    res.status(200).send(`Server is running on ${host} at port ${port}...`);
+    res.status(200).send(`Server is running on ${process.env.HOST} at port ${process.env.PORT}...`);
   });
 
   /**************************************************************************
@@ -93,12 +93,12 @@ export default function(database) {
     //    product_id: integer - Required ID of the product for which data should be returned
     //  res: 200 OK
     let productIdInt = parseInt(req.query.product_id);
+    console.log(productIdInt);
 
     Promise.all([database.getReviewsMeta(productIdInt), database.getCharacteristicsMeta(productIdInt)])
       .then(([temp_result, charNames]) => {
-        console.dir(temp_result);
-        console.dir(charNames);
-
+        console.log('temp_result:');
+        console.dir(temp_result)
         for (var x in charNames) {
           let ratings = temp_result.characteristics_temp[charNames[x].id.toString()];
           let sum = 0;
@@ -108,14 +108,11 @@ export default function(database) {
           let average = (sum / (ratings.length)).toFixed(4);
           charNames[x].value = average
         }
-
-        console.dir(charNames);
         temp_result.characteristics = charNames;
         delete temp_result.characteristics_temp;
         res.status(200).send(temp_result);
-
       })
-      .catch((err) => {res.status(400).send(err)})
+      .catch((err) => {console.dir(err); res.status(400).send(err)})
   }));
 
   app.post('/reviews', ((req, res) => {
@@ -132,7 +129,6 @@ export default function(database) {
     //    characteristics: object - Object of keys representing characteristic_id and values representing
     //                              the review value for that characteristic. {"14": 5, "15": 5//...}
     //  res: 201 CREATED
-
     database.postNewReview(req.query)
       .then((result) => res.status(201).send(result))
       .catch((message) => res.status(400).send(message))

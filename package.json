@@ -26,6 +26,7 @@
   "scripts": {
     "server": "node server/index.js",
     "server-dev": "nodemon --watch server server/index.js",
+    "server-dev-k6": "env MODE=test nodemon --watch server server/index.js",
     "test": "jest"
   },
   "repository": {

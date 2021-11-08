@@ -3,11 +3,17 @@ dotenv.config();
 
 // MongoDB Implementation
 import mongoose from 'mongoose';
-mongoose.connect(process.env.DB_CONNECTION_STRING);
+
+if (process.env.MODE === 'test') {
+  mongoose.connect(process.env.DB_TEST_CONNECTION_STRING);
+} else {
+  mongoose.connect(process.env.DB_CONNECTION_STRING);
+}
+
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Error: DB connection unsuccessful'));
-db.once('open', () => { console.log('Connected to database'); });
+db.once('open', () => { console.log(`Connected to database - Process ENV: ${process.env.MODE}`); });
 
 // SCHEMA FOR REVIEW PHOTO DOCUMENTS
 let reviewPhotoSchema = mongoose.Schema({
@@ -82,7 +88,7 @@ let reviewCharacteristicSchema = mongoose.Schema({
   },
   characteristic_id: {
     type: mongoose.Schema.Types.ObjectId,
-    required: [true, 'A \'characteristicId\' property must be included in the review characteristic']
+    required: [true, 'A \'characteristic_id\' property must be included in the review characteristic']
   }
 });
 
@@ -246,28 +252,58 @@ export function getReviews(productId, page=1, count=5, sort="relevant") {
 
 export function getReviewsMeta(productId) {
   return new Promise((resolve, reject) => {
-    var query = Review.find({product_id: productId, reported: false});
+    var query = Review.find({product_id: productId});
     query.exec((err, reviews) => {
       if (!err) {
-        let overallRatings = {'1': 0, '1': 0, '2':0, '3':0, '4':0, '5':0};
-        let recommendedCounts = {'0': 0, '1': 0};
-        let characteristics = {};
+        console.log(reviews);
 
+        let validReviewCount = 0;
         for (var i = 0; i < reviews.length; i++) {
-          overallRatings[(reviews[i].rating).toString()]++;
-          if (reviews[i].recommend) {
-            recommendedCounts['1']++;
-          } else {
-            recommendedCounts['0']++;
-          }
-          for (var j = 0; j < reviews[i].characteristic_ratings.length; j++) {
-            if (!characteristics[reviews[i].characteristic_ratings[j].characteristic_id]) {
-              characteristics[reviews[i].characteristic_ratings[j].characteristic_id] = [reviews[i].characteristic_ratings[j].value]
-            } else {
-              characteristics[reviews[i].characteristic_ratings[j].characteristic_id].push(reviews[i].characteristic_ratings[j].value)
-            }
+          if (reviews[i].reported === false) {
+            validReviewCount++;
           }
         }
+
+        console.log('valid review count: ' + validReviewCount);
+        let overallRatings = {'1': 0, '2':0, '3':0, '4':0, '5':0};
+        let recommendedCounts = {'false': 0, 'true': 0};
+        let characteristics = {};
+
+        if (validReviewCount) {
+          // let overallRatings = {'1': 0, '2':0, '3':0, '4':0, '5':0};
+          // let recommendedCounts = {'false': 0, 'true': 0};
+          // let characteristics = {};
+
+          for (var i = 0; i < reviews.length; i++) {
+            if (reviews.reported === false) {
+              overallRatings[(reviews[i].rating).toString()]++;
+              if (reviews[i].recommend) {
+                recommendedCounts['true']++;
+              } else {
+                recommendedCounts['false']++;
+              }
+            }
+            for (var j = 0; j < reviews[i].characteristic_ratings.length; j++) {
+              if (!characteristics[reviews[i].characteristic_ratings[j].characteristic_id]) {
+                characteristics[reviews[i].characteristic_ratings[j].characteristic_id] = [reviews[i].characteristic_ratings[j].value]
+              } else {
+                characteristics[reviews[i].characteristic_ratings[j].characteristic_id].push(reviews[i].characteristic_ratings[j].value)
+              }
+            }
+          }
+
+        } else {
+          overallRatings = {};
+          recommendedCounts = {};
+          // let characteristics = {};
+
+          for (var i = 0; i < reviews[0].characteristic_ratings.length; i++) {
+            characteristics[reviews[0].characteristic_ratings[i].characteristic_id] = null;
+          }
+
+        }
+
+        console.log(overallRatings);
 
         resolve({
           "product_id": productId.toString(),
@@ -324,7 +360,7 @@ export function postNewReview(reviewObj) {
       reviewer_name: reviewObj.name,
       reviewer_email: reviewObj.email,
       helpfulness: 0,
-      characteristics: [],
+      characteristic_ratings: [],
       photos: []
     }
 
@@ -335,8 +371,10 @@ export function postNewReview(reviewObj) {
       }
     }
 
-    for (var x in JSON.parse(reviewObj.characteristics)) {
-      newReqObj.characteristics.push({characteristic_id: x, value: reviewObj.characteristics[x]})
+    let charsObj = JSON.parse(reviewObj.characteristics)
+
+    for (var x in charsObj) {
+      newReqObj.characteristic_ratings.push({characteristic_id: mongoose.Types.ObjectId(x), value: charsObj[x]})
     }
 
     Review.create(newReqObj, (err, res) => {
