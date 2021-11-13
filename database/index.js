@@ -339,16 +339,18 @@ export function getCharacteristicsMeta(productId) {
 export function postNewReview(reviewObj) {
   return new Promise((resolve, reject) => {
     let boolConverter = (original) => {
-      if (original === 'true' || original === '1' || original === 1) {
+      if (original === 'true' || original === '1' || original === 1 || original === true) {
         return true;
-      } else if (original === 'false' || original === '0' || original === 1) {
+      } else if (original === 'false' || original === '0' || original === 0 || original === false) {
         return false;
       }
     }
 
     let newReqObj = {
-      product_id: parseInt(reviewObj.product_id),
-      rating: parseInt(reviewObj.rating),
+      // product_id: parseInt(reviewObj.product_id),
+      product_id: reviewObj.product_id,
+      // rating: parseInt(reviewObj.rating),
+      rating: reviewObj.rating,
       summary: reviewObj.summary,
       body: reviewObj.body,
       recommend: boolConverter(reviewObj.recommend),
@@ -361,22 +363,31 @@ export function postNewReview(reviewObj) {
     }
 
     if (reviewObj.photos) {
-      let newPhotosString = reviewObj.photos.replace(/'/g, "\"");
-      for (var i = 0; i < JSON.parse(newPhotosString).length; i++) {
-        newReqObj.photos.push({url: JSON.parse(newPhotosString)[i]})
+      // let newPhotosString = reviewObj.photos.replace(/'/g, "\"");
+      // for (var i = 0; i < JSON.parse(newPhotosString).length; i++) {
+      //   newReqObj.photos.push({url: JSON.parse(newPhotosString)[i]})
+      // }
+      for (var i = 0; i < reviewObj.photos.length; i++) {
+        newReqObj.photos.push({url: reviewObj.photos[i]})
       }
     }
 
-    let charsObj = JSON.parse(reviewObj.characteristics)
+    // let charsObj = JSON.parse(reviewObj.characteristics)
 
-    for (var x in charsObj) {
-      newReqObj.characteristic_ratings.push({characteristic_id: mongoose.Types.ObjectId(x), value: charsObj[x]})
+    // for (var x in charsObj) {
+    //   newReqObj.characteristic_ratings.push({characteristic_id: mongoose.Types.ObjectId(x), value: charsObj[x]})
+    // }
+    for (var x in reviewObj.characteristics) {
+      newReqObj.characteristic_ratings.push({characteristic_id: mongoose.Types.ObjectId(x), value: reviewObj.characteristics[x]})
     }
 
     Review.create(newReqObj, (err, res) => {
       if (!err) {
+        console.log('inside POST success')
         resolve('Successfully posted review')
       } else {
+        console.dir(err);
+        console.log('inside POST error')
         reject(err)
       }
     })

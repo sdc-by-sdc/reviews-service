@@ -1,10 +1,5 @@
-// const express = require('express');
-// const bodyParser = require('body-parser');
-// const databaseHelpers = require('../database/index');
 import express from 'express';
 import bodyParser from 'body-parser';
-
-// import { ReviewCharacteristic, Characteristic, ReviewPhoto, Review } from '../database/index.js';
 
 export default function(database) {
   const app = express();
@@ -43,13 +38,6 @@ export default function(database) {
    *                                                                        *
    **************************************************************************/
   app.get('/reviews', ((req, res) => {
-    //  add database helper here
-    //  params:
-    //    page: integer - Selects the page of results to return.  Default 1.
-    //    count: integer - Specifies how many results per page to return.  Default to 5.
-    //    sort: text - Changes the sort order of reviews to be based on "newest", "helpful", or "relevant"
-    //    product_id: integer - Specifies the product for which to retrieve reviews.
-    //  res: 200 OK
 
     let intId = parseInt(req.query.product_id);
     let page = parseInt(req.query.page || 1);
@@ -88,10 +76,6 @@ export default function(database) {
   }));
 
   app.get('/reviews/meta', ((req, res) => {
-    //  add database helper here
-    //  params:
-    //    product_id: integer - Required ID of the product for which data should be returned
-    //  res: 200 OK
     let productIdInt = parseInt(req.query.product_id);
 
     Promise.all([database.getReviewsMeta(productIdInt), database.getCharacteristicsMeta(productIdInt)])
@@ -126,39 +110,33 @@ export default function(database) {
   }));
 
   app.post('/reviews', ((req, res) => {
-    //  add database helper here
-    //  params:
-    //    product_id: integer - Required ID of the product to post the review for
-    //    rating: integer - Integer (1-5) indicating the review rating
-    //    summary: text - Summary text of the review
-    //    body: text - Continued or full text of the review
-    //    recommend: boolean - Value indicating if the reviewer recommends the product
-    //    name: text - Username for question asker
-    //    email: text - Email address for question asker
-    //    photos: [text] - Array of text urls that link to images to be shown
-    //    characteristics: object - Object of keys representing characteristic_id and values representing
-    //                              the review value for that characteristic. {"14": 5, "15": 5//...}
-    //  res: 201 CREATED
-    database.postNewReview(req.query)
+    console.dir(req.body);
+    // let newReqBody = {
+    //   product_id: JSON.stringify(req.body.product_id),
+    //   rating: JSON.stringify(req.body.rating),
+    //   summary: req.body.summary,
+    //   body: req.body.body,
+    //   recommend: JSON.stringify(req.body.recommend),
+    //   name: req.body.name,
+    //   email: req.body.email,
+    //   photos: JSON.stringify(req.body.photos),
+    //   characteristics: JSON.stringify(req.body.characteristics)
+    // }
+
+    // console.dir(newReqBody);
+    // database.postNewReview(newReqBody)
+    database.postNewReview(req.body)
       .then((result) => res.status(201).send(result))
       .catch((message) => res.status(400).send(message))
   }));
 
   app.put('/reviews/:review_id/helpful', ((req, res) => {
-    //  add database helper here
-    //  params:
-    //    review_id: integer - Required ID of the review to update
-    //  res: 204 NO CONTENT
     database.markReviewHelpful(req.params.review_id)
       .then((result) => res.status(204).send())
       .catch((message) => {res.status(400).send(message)})
   }));
 
   app.put('/reviews/:review_id/report', ((req, res) => {
-    //  add database helper here
-    //  params:
-    //    review_id: integer - Required ID of the review to update
-    //  res: 204 NO CONTENT
     database.reportReview(req.params.review_id)
       .then((result) => res.status(204).send())
       .catch((message) => {res.status(400).send(message)})
