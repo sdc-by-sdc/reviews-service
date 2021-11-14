@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 if (process.env.MODE === 'test') {
   mongoose.connect(process.env.DB_TEST_CONNECTION_STRING, {auth:{authdb:"admin"}});
 } else {
-  mongoose.connect(process.env.DB_CONNECTION_STRING);
+  mongoose.connect(process.env.DB_CONNECTION_STRING, {auth:{authdb:"admin"}});
 }
 
 
