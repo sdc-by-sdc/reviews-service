@@ -110,21 +110,6 @@ export default function(database) {
   }));
 
   app.post('/reviews', ((req, res) => {
-    console.dir(req.body);
-    // let newReqBody = {
-    //   product_id: JSON.stringify(req.body.product_id),
-    //   rating: JSON.stringify(req.body.rating),
-    //   summary: req.body.summary,
-    //   body: req.body.body,
-    //   recommend: JSON.stringify(req.body.recommend),
-    //   name: req.body.name,
-    //   email: req.body.email,
-    //   photos: JSON.stringify(req.body.photos),
-    //   characteristics: JSON.stringify(req.body.characteristics)
-    // }
-
-    // console.dir(newReqBody);
-    // database.postNewReview(newReqBody)
     database.postNewReview(req.body)
       .then((result) => res.status(201).send(result))
       .catch((message) => res.status(400).send(message))
