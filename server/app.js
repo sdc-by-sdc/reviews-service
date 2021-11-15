@@ -134,5 +134,9 @@ export default function(database) {
     res.sendfile('server/static/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt')
   })
 
+  app.get('/getReviewsPayload.js', (req, res) => {
+    res.sendfile('server/static/getReviewsPayload.js')
+  })
+
   return app;
 }
