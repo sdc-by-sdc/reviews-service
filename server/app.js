@@ -7,7 +7,10 @@ export default function(database) {
   app.use(bodyParser.urlencoded({
     extended: true
   }));
+
   app.use(bodyParser.json());
+
+  app.use(express.static('static'));
 
   app.get('/', (req, res) => {
     res.status(200).send(`Server is running on ${process.env.HOST} at port ${process.env.PORT}...`);
