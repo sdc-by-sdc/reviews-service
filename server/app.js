@@ -130,5 +130,9 @@ export default function(database) {
       .catch((message) => {res.status(400).send(message)})
   }));
 
+  app.get('/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt', (req, res) => {
+    res.sendfile('server/static/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt')
+  })
+
   return app;
 }
