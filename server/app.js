@@ -10,7 +10,7 @@ export default function(database) {
 
   app.use(bodyParser.json());
 
-  app.use(express.static('/static'));
+  app.use(express.static('static'));
 
   app.get('/', (req, res) => {
     res.status(200).send(`Server is running on ${process.env.HOST} at port ${process.env.PORT}...`);
@@ -130,8 +130,8 @@ export default function(database) {
       .catch((message) => {res.status(400).send(message)})
   }));
 
-  app.get('/loaderio*txt', (req, res) => {
-
+  app.get('/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt', (req, res) => {
+    res.sendfile('server/static/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt')
   })
 
   return app;

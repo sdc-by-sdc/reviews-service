@@ -5,7 +5,7 @@ dotenv.config();
 import mongoose from 'mongoose';
 
 if (process.env.MODE === 'test') {
-  mongoose.connect(process.env.DB_TEST_CONNECTION_STRING, {auth:{authdb:"admin"}});
+  mongoose.connect(process.env.DB_TEST_CONNECTION_STRING);
 } else {
   mongoose.connect(process.env.DB_CONNECTION_STRING, {auth:{authdb:"admin"}, user: process.env.DB_USERNAME, pass: process.env.DB_PASSWORD});
 }
