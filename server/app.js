@@ -135,7 +135,7 @@ export default function(database) {
   })
 
   // Loader.io verification for load balancer
-  app.get('loaderio-e4746eac9e663fe2449fdfd38b7483ea.txt', (req, res) => {
+  app.get('/loaderio-e4746eac9e663fe2449fdfd38b7483ea.txt', (req, res) => {
     res.sendfile('server/static/loaderio-e4746eac9e663fe2449fdfd38b7483ea.txt')
   })
 
