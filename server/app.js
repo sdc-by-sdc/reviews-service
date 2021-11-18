@@ -131,7 +131,7 @@ export default function(database) {
   }));
 
   app.get('/loaderio-27c31e50c7ca8526b82e17abaa59ca15.txt', (req, res) => {
-    res.sendfile('server/statisc/loaderio-27c31e50c7ca8526b82e17abaa59ca15.txt')
+    res.sendfile('server/static/loaderio-27c31e50c7ca8526b82e17abaa59ca15.txt')
   })
 
   app.get('/getReviewsPayload.txt', (req, res) => {
