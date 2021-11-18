@@ -130,16 +130,8 @@ export default function(database) {
       .catch((message) => {res.status(400).send(message)})
   }));
 
-  app.get('/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt', (req, res) => {
-    res.sendfile('server/static/loaderio-e2f33ba14aa55078156dfb3deb29d6ff.txt')
-  })
-
-  app.get('/loaderio-bfb0d6830ee42b4282c9cd8b31ef16ec.txt', (req, res) => {
-    res.sendfile('server/static/loaderio-bfb0d6830ee42b4282c9cd8b31ef16ec.txt')
-  })
-
-  app.get('/loaderio-e4746eac9e663fe2449fdfd38b7483ea.txt', (req, res) => {
-    res.sendfile('server/static/loaderio-e4746eac9e663fe2449fdfd38b7483ea.txt')
+  app.get('/loaderio-27c31e50c7ca8526b82e17abaa59ca15.txt', (req, res) => {
+    res.sendfile('server/statisc/loaderio-27c31e50c7ca8526b82e17abaa59ca15.txt')
   })
 
   app.get('/getReviewsPayload.txt', (req, res) => {
